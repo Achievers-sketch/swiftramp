@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Navbar from '../../components/Navbar'
+import AuditVerifiedBadge from '../../components/AuditVerifiedBadge'
 
 const rates: Record<string, number> = { NGN: 1580, KES: 130, GHS: 15.6, ZAR: 18.9, USD: 1, EUR: 0.93, GBP: 0.79 }
 const flags: Record<string, string> = { NGN: '🇳🇬', KES: '🇰🇪', GHS: '🇬🇭', ZAR: '🇿🇦', USD: '🇺🇸', EUR: '🇪🇺', GBP: '🇬🇧' }
@@ -695,6 +696,7 @@ export default function Home() {
             <h2 className="display">Sent</h2>
             <p>{receive} {toCcy} is on its way · Arrives in ~5 seconds</p>
             <div className="zk-verified-badge"><ShieldIcon size={12} color="var(--privacy)" /> zk-SNARK proof verified</div>
+            <AuditVerifiedBadge proofHash={proofHex} />
             <table className="audit-table">
               <tbody>
                 <tr>
