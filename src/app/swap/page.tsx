@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { generateProof } from '../../lib/prover'
 
 const rates: Record<string, number> = { NGN: 1580, KES: 130, GHS: 15.6, ZAR: 18.9, USD: 1, EUR: 0.93, GBP: 0.79 }
 const flags: Record<string, string> = { NGN: '🇳🇬', KES: '🇰🇪', GHS: '🇬🇭', ZAR: '🇿🇦', USD: '🇺🇸', EUR: '🇪🇺', GBP: '🇬🇧' }
@@ -414,20 +415,40 @@ export default function SwapPage() {
   }, [isClient, proofHex])
 
   useEffect(() => {
-    if (status !== 'proving') return
-    timers.current.forEach(clearTimeout)
-    timers.current = []
-    setProofStepIdx(-1)
-    PROOF_STEPS.forEach((_, i) => {
-      const t = setTimeout(() => {
-        setProofStepIdx(i)
-        setProofHex(randomHex(48))
-      }, 480 + i * 620)
-      timers.current.push(t)
-    })
-    const finish = setTimeout(() => setStatus('sent'), 480 + PROOF_STEPS.length * 620 + 380)
-    timers.current.push(finish)
-    return () => timers.current.forEach(clearTimeout)
+    if (status !== 'proving') return;
+    let isCancelled = false;
+
+    async function runProving() {
+      setProofStepIdx(0);
+      await new Promise(r => setTimeout(r, 480));
+      if (isCancelled) return;
+
+      setProofStepIdx(1);
+      
+      try {
+        const result = await generateProof({
+          amount_in: sendAmt,
+          amount_out: receive,
+          secret: randomHex(16)
+        });
+        
+        if (isCancelled) return;
+        setProofHex(result.proofHex);
+        setProofStepIdx(2);
+        
+        await new Promise(r => setTimeout(r, 620));
+        if (isCancelled) return;
+        
+        setStatus('sent');
+      } catch (err) {
+        console.error(err);
+        if (!isCancelled) setStatus('idle');
+      }
+    }
+
+    runProving();
+
+    return () => { isCancelled = true; };
   }, [status])
 
   const handleSend = () => { if (walletAddress) setStatus('proving') }
