@@ -3,9 +3,8 @@ import { useState, useEffect, useRef } from 'react'
 import Navbar from '../../components/Navbar'
 import RateStatus from '../../components/RateStatus'
 import { useRates } from '../lib/useRates'
-
-const flags: Record<string, string> = { NGN: '🇳🇬', KES: '🇰🇪', GHS: '🇬🇭', ZAR: '🇿🇦', USD: '🇺🇸', EUR: '🇪🇺', GBP: '🇬🇧' }
-const ccyList = ['NGN', 'KES', 'GHS', 'ZAR', 'USD', 'EUR']
+import AuditVerifiedBadge from '../../components/AuditVerifiedBadge'
+import { rates, flags, ccyList } from '@/lib/constants'
 
 // Abstract nodes scattered across a globe silhouette — positions are illustrative, not a real map
 const nodes = [
@@ -702,6 +701,7 @@ export default function Home() {
             <h2 className="display">Sent</h2>
             <p>{receive} {toCcy} is on its way · Arrives in ~5 seconds</p>
             <div className="zk-verified-badge"><ShieldIcon size={12} color="var(--privacy)" /> zk-SNARK proof verified</div>
+            <AuditVerifiedBadge proofHash={proofHex} />
             <table className="audit-table">
               <tbody>
                 <tr>

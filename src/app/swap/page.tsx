@@ -2,9 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 import RateStatus from '../../../components/RateStatus'
 import { useRates } from '../../lib/useRates'
-
-const flags: Record<string, string> = { NGN: '🇳🇬', KES: '🇰🇪', GHS: '🇬🇭', ZAR: '🇿🇦', USD: '🇺🇸', EUR: '🇪🇺', GBP: '🇬🇧' }
-const ccyList = ['NGN', 'KES', 'GHS', 'ZAR', 'USD', 'EUR']
+import AuditVerifiedBadge from '../../../components/AuditVerifiedBadge'
+import { rates, flags, ccyList } from '@/lib/constants'
 const tickerPairs = [
   ['USD', 'NGN'], ['USD', 'KES'], ['USD', 'GHS'], ['USD', 'ZAR'], ['EUR', 'NGN'], ['GBP', 'NGN'], ['USD', 'EUR'],
 ]
@@ -607,6 +606,7 @@ export default function SwapPage() {
             <h2 className="swap-display">Sent</h2>
             <p>{receive} {toCcy} is on its way · Arrives in ~5 seconds</p>
             <div className="zk-verified-badge"><ShieldIcon size={12} color="var(--sw-mint)" /> zk-SNARK proof verified</div>
+            <AuditVerifiedBadge proofHash={proofHex} />
             <table className="audit-table">
               <tbody>
                 <tr>
